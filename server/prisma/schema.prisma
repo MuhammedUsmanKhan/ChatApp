@@ -1,0 +1,132 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                        String                     @id @default(uuid())
+  full_name                 String
+  username                  String                     @unique
+  email                     String                     @unique
+  email_verified            Boolean?                   @default(false)
+  email_verifiedAt          DateTime?
+  password                  String
+  last_password_change_At   DateTime?
+  last_login_At             DateTime?
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
+  User_Account_Verification User_Account_Verification?
+  User_Account_Providers    User_Account_Providers[]
+  // Relations
+  sentMessages              Message[]
+  chatParticipants          ChatParticipant[]
+
+  RefreshToken RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([expiresAt]) // Added for faster cleanup queries
+  @@index([revoked]) // Added for faster revocation checks
+}
+
+model User_Account_Verification {
+  id        String           @id @default(uuid())
+  code      String
+  type      user_verfication @default(email_verification)
+  user      User             @relation(fields: [user_id], references: [id])
+  user_id   String           @unique
+  limit     Int
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt()
+}
+
+model User_Account_Providers {
+  id        String                 @id @default(uuid())
+  user      User                   @relation(fields: [user_id], references: [id])
+  user_id   String                 @unique
+  provider  user_account_provdiers @default(email)
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @updatedAt()
+}
+
+enum user_account_provdiers {
+  google
+  email
+}
+
+enum user_verfication {
+  email_verification
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+// prisma/schema.prisma
+
+model Chat {
+  id        String   @id @default(uuid())
+  name      String? // For group chats
+  isGroup   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  participants ChatParticipant[]
+  messages     Message[]
+}
+
+model ChatParticipant {
+  id       String   @id @default(uuid())
+  chatId   String
+  userId   String
+  joinedAt DateTime @default(now())
+
+  // Relations
+  chat Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([chatId, userId])
+}
+
+model Message {
+  id          String   @id @default(uuid())
+  content     String
+  chatId      String
+  senderId    String
+  messageType String   @default("TEXT") // TEXT, IMAGE, FILE, etc.
+  createdAt   DateTime @default(now())
+
+  // Relations
+  chat   Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  sender User @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+// Table user_account_providers {
+// id integer [primary key]
+// user_id integer [ref: > users.id, not null] // many-to-one 
+// provider user_account_provdiers.provider [default: "email"]
+
+// created_at timestamp [default: `now()`]
+// update_at timestamp
+// }
