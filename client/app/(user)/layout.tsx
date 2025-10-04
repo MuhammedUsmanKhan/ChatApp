@@ -19,7 +19,7 @@ export default function DashboardLayout({
         <Header />
         <div className="flex flex-1">
           <Sidebar />
-          <main className="w-full">
+          <main className="border flex-1 w-full">
             <SidebarTrigger />
             {children}
           </main>

@@ -1,19 +1,20 @@
 // src/chat/chat.gateway.ts
-import { 
-  WebSocketGateway, 
-  WebSocketServer, 
+import {
+  WebSocketGateway,
+  WebSocketServer,
   SubscribeMessage,
   OnGatewayConnection,
-  OnGatewayDisconnect 
-} from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { ChatService } from 'src/chat/chat.service';
+  OnGatewayDisconnect,
+  MessageBody,
+} from "@nestjs/websockets";
+import { Server, Socket } from "socket.io";
+import { ChatService } from "src/chat/chat.service";
 
 @WebSocketGateway({
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    credentials: true
-  }
+    origin: process.env.FRONTEND_URL || "http://localhost:3001",
+    credentials: true,
+  },
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
@@ -28,7 +29,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (userId) {
       this.connectedUsers.set(client.id, userId);
       console.log(`User ${userId} connected with socket ${client.id}`);
-      
+
       // Join user to their personal room and all their chat rooms
       client.join(`user_${userId}`);
     }
@@ -42,49 +43,53 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  @SubscribeMessage('joinChat')
+  @SubscribeMessage("joinChat")
   handleJoinChat(client: Socket, chatId: string) {
+    console.log(`Socket ${chatId}`);
+
     client.join(`chat_${chatId}`);
     console.log(`Socket ${client.id} joined chat ${chatId}`);
   }
 
-  @SubscribeMessage('sendMessage')
-  async handleSendMessage(client: Socket, payload: { chatId: string; content: string }) {
+  @SubscribeMessage("sendMessage")
+  async handleSendMessage(
+    client: Socket,
+    payload: { chatId: string; content: string }
+  ) {
     const userId = this.connectedUsers.get(client.id);
-    
+
     if (!userId) {
-      client.emit('error', 'User not authenticated');
+      client.emit("error", "User not authenticated");
       return;
     }
 
     try {
       // Save message to database
       const message = await this.chatService.sendMessage(
-        payload.chatId, 
-        userId, 
+        payload.chatId,
+        userId,
         payload.content
       );
 
       // Broadcast to all users in the chat room
-      this.server.to(`chat_${payload.chatId}`).emit('receiveMessage', message);
-      
+      this.server.to(`chat_${payload.chatId}`).emit("receiveMessage", message);
+
       // Update chat's updatedAt timestamp
       await this.chatService.updateChatTimestamp(payload.chatId);
-
     } catch (error) {
-      client.emit('error', 'Failed to send message');
-      console.error('Error sending message:', error);
+      client.emit("error", "Failed to send message");
+      console.error("Error sending message:", error);
     }
   }
 
-  @SubscribeMessage('typing')
+  @SubscribeMessage("typing")
   handleTyping(client: Socket, payload: { chatId: string; isTyping: boolean }) {
     const userId = this.connectedUsers.get(client.id);
     if (userId) {
       // Broadcast typing indicator to other users in the chat
-      client.to(`chat_${payload.chatId}`).emit('userTyping', {
+      client.to(`chat_${payload.chatId}`).emit("userTyping", {
         userId,
-        isTyping: payload.isTyping
+        isTyping: payload.isTyping,
       });
     }
   }
@@ -92,11 +97,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private async getUserIdFromToken(client: Socket): Promise<string | null> {
     // Implement JWT token verification from handshake auth
     // This depends on your existing auth setup
+
+    console.log(client.handshake);
+
     try {
       const token = client.handshake.auth.token;
       // Verify token and extract user ID
       // return userId;
-      return 'user-id-from-token'; // Replace with actual implementation
+      return "user-id-from-token"; // Replace with actual implementation
     } catch (error) {
       return null;
     }

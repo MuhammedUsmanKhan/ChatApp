@@ -19,10 +19,11 @@ export function ChatContainer() {
   }
 
   return (
-    <div className="flex flex-col w-full max-w-lg border rounded-2xl shadow-md bg-background">
-      <ChatHeader username="Ali Khan" status="Online" />
-      <MessageList messages={messages} />
-      <MessageInput onSend={handleSend} />
-    </div>
+    // <div className="flex-1 border-8">
+    //   <ChatHeader username="Ali Khan" status="Online" />
+    //   <MessageList messages={messages} />
+    //   <MessageInput onSend={handleSend} />
+    // </div>
+    <></>
   )
 }
