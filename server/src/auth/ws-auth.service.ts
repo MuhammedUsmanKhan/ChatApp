@@ -6,9 +6,11 @@ import { verify } from 'jsonwebtoken';
 export class WSAuthConfigService {
   constructor(private configService: ConfigService) {}
 
-  isValidAuthHeader(authorization: string) {
-    const token: string = authorization.split(' ')[1];
-    const payload = verify(token, this.configService.get('JWT_SECRET_KEY'), {
+  isValidAuthHeader(token: string) {
+    console.log({token});
+    
+    // const token: string = authorization.split(' ')[1];
+    const payload = verify(token, this.configService.get('JWT_ACCESS_SECRET'), {
       ignoreExpiration: true,
     });
     return payload;

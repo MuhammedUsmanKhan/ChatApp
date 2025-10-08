@@ -58,7 +58,7 @@ export class AuthService {
         data: {
           full_name: signUpUserDto.full_name,
           email: signUpUserDto.email,
-          username:'',
+          username: "",
           password: await encryptPassword(signUpUserDto.password),
         },
       });
@@ -131,16 +131,21 @@ export class AuthService {
     }
   }
 
-  async login(signInUserDto: SignInUserDto, res: Response): Promise<UserDto> {
+  async login(user: UserDto, res: Response): Promise<UserDto> {
     // Find user by email
-    const user = await this.prismaService.user.findUnique({
-      where: { email: signInUserDto.email },
-    });
+    // const user = await this.prismaService.user.findUnique({
+    //   where: { email: signInUserDto.email },
+    // });
 
-    // Check if user exists and password is correct
-    if (!user || !comparePassword(signInUserDto.password, user.password)) {
-      throw new UnauthorizedException("Invalid credentials");
-    }
+    // console.log({
+    //   userPass: user.password,
+    //   signInUserPass: signInUserDto.password,
+    // });
+
+    // // Check if user exists and password is correct
+    // if (!user || !comparePassword(signInUserDto.password, user.password)) {
+    //   throw new UnauthorizedException("Invalid credentials");
+    // }
 
     // Generate tokens
     const accessToken = this.authRefreshTokenService.generateAccessToken(user);

@@ -36,7 +36,6 @@ import { Request, Response } from "express";
 @Public()
 @ApiTags("Authentication")
 @Controller("auth")
-
 export class AuthController {
   constructor(
     // private readonly userService: UserService,
@@ -149,6 +148,8 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   login(@Req() request: any, @Res({ passthrough: true }) res: Response) {
     const user = request.user;
+
+    console.log({ user });
     return this.authService.login(user, res);
   }
 

@@ -124,6 +124,7 @@ import { Socket } from "socket.io";
 import { CommonGateway } from "src/common/gateway/base.gateway";
 import { ChatService } from "./chat.service";
 import { WSAuthConfigService } from "src/auth/ws-auth.service";
+import { ChatClientEvents, ChatEventType } from "./event/chat.event";
 
 @WebSocketGateway({
   cors: {
@@ -152,7 +153,7 @@ export class ChatGateway extends CommonGateway {
   }
 
   // --- Event Handlers ---
-  @SubscribeMessage("send_message")
+  @SubscribeMessage(ChatClientEvents.SEND_MESSAGE)
   handleMessage(
     @MessageBody() payload: { chatId: string; content: string },
     @ConnectedSocket() client: Socket
@@ -168,4 +169,24 @@ export class ChatGateway extends CommonGateway {
       timestamp: new Date(),
     });
   }
+
+
+
+@SubscribeMessage(ChatClientEvents.JOIN_ROOM)
+  handleJoinRoom(
+    @MessageBody() payload: { chatId: string; content: string },
+    @ConnectedSocket() client: Socket
+  ) {
+    const userId = this.getUserIdFromSocket(client);
+
+    this.logger.log(`User ${userId} sent message to chat ${payload.chatId}`);
+
+    // Emit message to all users in that chat room
+    this.server.to(payload.chatId).emit("new_message", {
+      senderId: userId,
+      content: payload.content,
+      timestamp: new Date(),
+    });
+  }
+
 }

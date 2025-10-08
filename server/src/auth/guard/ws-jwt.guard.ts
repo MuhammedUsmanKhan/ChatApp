@@ -15,6 +15,8 @@ export class WsJwtAuthGuard implements CanActivate {
 
     const client = context.switchToWs().getClient<Socket>();
     const { authorization } = client.handshake.headers;
+    console.log({authorization});
+    
     const payload = this.wsAuthConfigService.isValidAuthHeader(authorization);
     if (!payload) {
       return false; // deny access
