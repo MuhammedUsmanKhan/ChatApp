@@ -19,17 +19,23 @@ import {
 import { JwtService } from "@nestjs/jwt";
 import { MailerService } from "src/mailer/mailer.service";
 import { Response } from "express";
+import { UserDto } from "src/auth/dto/user.dto";
 
 @Injectable()
 export class UserService {
-  constructor(
-    private readonly prismaService: PrismaService,
-    private readonly jwtService: JwtService,
-    // private readonly mailerService: MailerService,
-    // private readonly authRefreshTokenService: AuthRefreshTokenService // ✅ inject service
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
+  async getAllUsers(user: UserDto) {
+    const users = await this.prismaService.user.findMany({
+      where: {
+        NOT: {
+          id: user.id,
+        },
+      },
+    });
 
+    return users;
+  }
 }
 
 // sign up, sign in, logout,  verifyEmail, verifyForgotPassword, forgetPassword changePassword

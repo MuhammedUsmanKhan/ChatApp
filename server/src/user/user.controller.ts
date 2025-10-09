@@ -9,12 +9,17 @@ import {
   UsePipes,
   ValidationPipe,
   ParseUUIDPipe,
-} from '@nestjs/common';
-import { UserService } from './user.service';
+  Req,
+} from "@nestjs/common";
+import { UserService } from "./user.service";
 
-@Controller('user')
+@Controller("user")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-
+  @Get()
+  async getAllUsers(@Req() request: any) {
+    const user = request.user;
+    return this.userService.getAllUsers(user);
+  }
 }
