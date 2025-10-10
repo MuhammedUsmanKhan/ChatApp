@@ -33,7 +33,6 @@ enum FriendshipStatus {
   BLOCKED
 }
 
-
 model User {
   id                        String                     @id @default(uuid())
   full_name                 String
@@ -101,8 +100,8 @@ model Friendship {
   user   User @relation("UserFriends", fields: [userId], references: [id])
   friend User @relation("UserFriendOf", fields: [friendId], references: [id])
 
-  status    String   @default("pending") // pending, accepted, blocked
-  createdAt DateTime @default(now())
+  status    FriendshipStatus @default(PENDING) // pending, accepted, blocked
+  createdAt DateTime         @default(now())
 
   @@unique([userId, friendId])
 }

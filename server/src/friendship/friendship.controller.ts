@@ -5,7 +5,7 @@ import { FriendshipService } from './friendship.service';
 
 @Controller('friendship')
 export class FriendshipController {
-  constructor(private readonly userService: FriendshipService) {}
+  constructor(private readonly friendshipService: FriendshipService) {}
 
 
 }

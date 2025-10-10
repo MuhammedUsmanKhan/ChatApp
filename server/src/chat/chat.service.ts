@@ -1,10 +1,32 @@
 // src/chat/chat.service.ts
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
+import { CreateChatDto } from "./dto/create-chat.dto";
 
 @Injectable()
 export class ChatService {
   constructor(private prisma: PrismaService) {}
+
+  async createChat() {
+    const chat = await this.prisma.chat.create({
+      data: {
+        isGroup: false,
+      },
+    });
+
+    return chat;
+  }
+
+  async createGroupChat() {
+    const chat = await this.prisma.chat.create({
+      data: {
+        name:'group chat',
+        isGroup: true,
+      },
+    });
+
+    return chat;
+  }
 
   // async createChat(participantIds: string[], name?: string) {
   //   const isGroup = participantIds.length > 2;
