@@ -1,8 +1,8 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { VersioningType } from '@nestjs/common';
-import * as cookieParser from 'cookie-parser';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { ValidationPipe, VersioningType } from "@nestjs/common";
+import * as cookieParser from "cookie-parser";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,14 +11,22 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
   app.use(cookieParser());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  );
+
   const config = new DocumentBuilder()
-    .setTitle('Notepott API')
-    .setDescription('Notepott API Description')
-    .setVersion('1.0')
+    .setTitle("Notepott API")
+    .setDescription("Notepott API Description")
+    .setVersion("1.0")
     // .addTag('cats')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup("api", app, document);
   await app.listen(3000);
 }
 bootstrap();
@@ -145,4 +153,3 @@ bootstrap();
 //     throw error;
 //   }
 // }
-

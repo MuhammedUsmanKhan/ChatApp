@@ -12,7 +12,7 @@ import { MailerModule } from './mailer/mailer.module';
 import { ChatModule } from './chat/chat.module';
 import { NotificationModule } from './notification/notification.module';
 import { FriendshipModule } from './friendship/friendship.module';
-import { ChatparticipantModule } from './chatparticipant/chatparticipant.module';
+import { ChatParticipantModule} from './chatparticipant/chatparticipant.module';
 import configuration from './config/env/configuration';
 
 @Module({
@@ -27,7 +27,7 @@ import configuration from './config/env/configuration';
     ChatModule,
     NotificationModule,
     FriendshipModule,
-    ChatparticipantModule,
+    ChatParticipantModule,
   ],
   controllers: [],
   providers: [

@@ -7,10 +7,16 @@ import { CreateChatDto } from "./dto/create-chat.dto";
 export class ChatService {
   constructor(private prisma: PrismaService) {}
 
-  async createChat() {
+  async createChat(createChatDto: CreateChatDto) {
     const chat = await this.prisma.chat.create({
       data: {
         isGroup: false,
+        participants: {
+          create: [
+            { userId: createChatDto.userId },
+            { userId: createChatDto.friendId },
+          ],
+        },
       },
     });
 
@@ -20,7 +26,7 @@ export class ChatService {
   async createGroupChat() {
     const chat = await this.prisma.chat.create({
       data: {
-        name:'group chat',
+        name: "group chat",
         isGroup: true,
       },
     });

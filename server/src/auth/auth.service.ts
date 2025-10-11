@@ -58,7 +58,7 @@ export class AuthService {
         data: {
           full_name: signUpUserDto.full_name,
           email: signUpUserDto.email,
-          username: "",
+          username: signUpUserDto.username,
           password: await encryptPassword(signUpUserDto.password),
         },
       });

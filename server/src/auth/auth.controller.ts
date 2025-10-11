@@ -90,7 +90,7 @@ export class AuthController {
   // sign up controller
   @Version("1")
   @Post("signup")
-  @UsePipes(ValidationPipe)
+  // @UsePipes(ValidationPipe)
   signup(
     @Body() signUpUserDto: SignUpUserDto,
     @Res({ passthrough: true }) res: Response
@@ -144,10 +144,10 @@ export class AuthController {
   @Version("1")
   @Post("signin")
   @HttpCode(200)
-  @UsePipes(ValidationPipe)
+  // @UsePipes(ValidationPipe)
   @UseGuards(LocalAuthGuard)
-  login(@Req() request: any, @Res({ passthrough: true }) res: Response) {
-    const user = request.user;
+  login(@User() user: any, @Res({ passthrough: true }) res: Response) {
+    // const user = request.user;
 
     console.log({ user });
     return this.authService.login(user, res);
@@ -196,7 +196,7 @@ export class AuthController {
   // account verification controller
   @Version("1")
   @Patch("account-verification")
-  @UsePipes(ValidationPipe)
+  // @UsePipes(ValidationPipe)
   verifyEmail(
     @Body() accountVerificationUserDto: AccountVerificationUserDto,
     @Res({ passthrough: true }) res: Response
@@ -210,7 +210,7 @@ export class AuthController {
     description: "Otp and email for user verification for changing password",
     type: AccountVerificationUserDto,
   })
-  @UsePipes(ValidationPipe)
+  // @UsePipes(ValidationPipe)
   @ApiResponse({
     status: 404,
     description: "Email not found",
@@ -303,7 +303,7 @@ export class AuthController {
   //send Otp on forget password controller
   @Version("1")
   @Get("forget-password")
-  @UsePipes(ValidationPipe)
+  // @UsePipes(ValidationPipe)
   sendOtpOnforgetPassword(
     @Body() forgetPasswordUserDto: ForgetPasswordUserDto
   ) {
@@ -365,7 +365,7 @@ export class AuthController {
   //change password controller
   @Version("1")
   @Patch("change-password")
-  @UsePipes(ValidationPipe)
+  // @UsePipes(ValidationPipe)
   changePassword(@Body() changePasswordDto: ChangePasswordDto) {
     return this.authService.changePassword(changePasswordDto);
   }
@@ -417,7 +417,7 @@ export class AuthController {
   //resend Otp controller
   @Version("1")
   @Get("resend-otp")
-  @UsePipes(ValidationPipe)
+  // @UsePipes(ValidationPipe)
   resendOtp(@Body() ResendOtpDto: ResendOtpDto) {
     return this.authService.resendOtp(ResendOtpDto);
   }

@@ -7,6 +7,7 @@ import {
   WebSocketServer,
 } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
+import { UserDto } from "src/auth/dto/user.dto";
 import { WsJwtAuthGuard } from "src/auth/guard/ws-jwt.guard";
 import { SocketAuthMiddleware } from "src/auth/middleware/ws-auth.mw";
 import { WSAuthConfigService } from "src/auth/ws-auth.service";
@@ -40,6 +41,9 @@ export abstract class CommonGateway
 
   protected getUserIdFromSocket(client: Socket): string {
     return client.data?.user?.id;
+  }
+  protected getUserFromSocket(client: Socket): UserDto {
+    return client.data?.user;
   }
 
   protected joinPersonalRoom(client: Socket, userId: string) {

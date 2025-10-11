@@ -9,12 +9,12 @@ export enum ChatEventType {
 }
 
 export enum ChatClientEvents {
-  SEND_MESSAGE = 'send_message',
-  JOIN_ROOM = 'join_room',
-  LEAVE_ROOM = 'leave_room',
-  TYPING_START = 'typing_start',
-  TYPING_STOP = 'typing_stop',
-  DELETE_MESSAGE = 'delete_message'
+  SEND_MESSAGE = 'SEND_MESSAGE',
+  JOIN_ROOM = 'JOIN_ROOM',
+  LEAVE_ROOM = 'LEAVE_ROOM',
+  TYPING_START = 'TYPING_START',
+  TYPING_STOP = 'TYPING_STOP',
+  DELETE_MESSAGE = 'DELETE_MESSAGE'
 }
 
 export class NewMessageEvent {

@@ -1,15 +1,15 @@
 import { IsBoolean, IsNotEmpty, IsString } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 export class CreateChatDto {
-//   @IsNotEmpty()
-//   participantIds: string[];
+  @IsString()
+  @IsNotEmpty()
+  userId: string;
 
-//   @IsString()
-//   name?: string;
-
-//   @IsBoolean()
-//   isGroup: boolean = false;
-
-  //   @IsNotEmpty()
-  //   status: string;
+  @ApiProperty({
+    description: "The email of the user",
+    example: "johndoe@gmail.com",
+  })
+  @IsString()
+  @IsNotEmpty()
+  friendId: string;
 }
