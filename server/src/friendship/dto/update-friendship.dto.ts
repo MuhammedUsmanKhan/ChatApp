@@ -1,11 +1,8 @@
 import { IsNotEmpty, IsString } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
+import { FriendshipStatus } from "../enum/friendship-status.enum";
 
-enum FriendshipStatus {
-  ACCEPTED = 'ACCEPTED',
-  PENDING = 'PENDING',
-  BLOCKED = 'BLOCKED',
-}
+
 
 export class UpdateFriendshipDto {
   // @ApiProperty({

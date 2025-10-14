@@ -11,6 +11,7 @@ import { CommonGateway } from "src/common/gateway/base.gateway";
 import { ChatService } from "./chat.service";
 import { WSAuthConfigService } from "src/auth/ws-auth.service";
 import { ChatClientEvents, ChatEventType } from "./event/chat.event";
+import { OnEvent } from "@nestjs/event-emitter";
 
 @WebSocketGateway({
   cors: {
@@ -65,21 +66,22 @@ export class ChatGateway extends CommonGateway {
   }
 
   // --- Event Handlers ---
-  @SubscribeMessage(ChatClientEvents.SEND_MESSAGE)
-  handleMessage(
-    @MessageBody() payload: { chatId: string; content: string },
-    @ConnectedSocket() client: Socket
-  ) {
-    const userId = this.getUserIdFromSocket(client);
+  @OnEvent(ChatClientEvents.SEND_MESSAGE)
+  handleMessage(payload: {
+    chatId: string;
+    content: string;
+    senderId: string;
+  }) {
 
-    this.logger.log(`User ${userId} sent message to chat ${payload.chatId}`);
+    this.logger.log(
+      `User ${payload.senderId} sent message to chat ${payload.chatId}`
+    );
 
     // Emit message to all users in that chat room
     this.server.to(payload.chatId).emit(ChatEventType.NEW_MESSAGE, {
-      senderId: userId,
+      senderId: payload.senderId,
       content: payload.content,
       timestamp: new Date(),
     });
   }
-
 }

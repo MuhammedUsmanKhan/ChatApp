@@ -2,6 +2,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateChatDto } from "./dto/create-chat.dto";
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class ChatService {
